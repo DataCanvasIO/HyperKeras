@@ -29,7 +29,7 @@ setup(
     install_requires=requirements,
     python_requires=MIN_PYTHON_VERSION,
     extras_require={
-        'tests': ['pytest', ],
+        'hypernets_tests': ['pytest', ],
         'gpu': ['tensorflow-gpu>=2.1.0', ]
     },
 
@@ -47,7 +47,7 @@ setup(
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    packages=find_packages(exclude=('docs', 'tests')),
+    packages=find_packages(exclude=('docs', 'hypernets_tests')),
     package_data={
     },
     zip_safe=False,

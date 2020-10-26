@@ -36,7 +36,7 @@ class OneShotModel(HyperKeras):
                                            one_shot_train_sampler=one_shot_train_sampler,
                                            visualization=visualization)
 
-    def search(self, X, y, X_val, y_val, max_trails=None, dataset_id=None, trail_store=None, **fit_kwargs):
+    def search(self, X, y, X_eval, y_eval, max_trails=None, dataset_id=None, trail_store=None, **fit_kwargs):
         self.start_search_time = time.time()
         try:
             trail_no = 1
@@ -44,11 +44,11 @@ class OneShotModel(HyperKeras):
                 print(f'One-shot model epoch({epoch}) training...')
                 self.fit_one_shot_model_epoch(X, y, batch_size=self.batch_size, epoch=epoch)
                 if self.train_controller_per_epoch:
-                    trail_no = self.train_controller(X_val, y_val, self.controller_train_steps, max_trails, trail_no)
+                    trail_no = self.train_controller(X_eval, y_eval, self.controller_train_steps, max_trails, trail_no)
 
             if not self.train_controller_per_epoch:
                 print(f'Architecture searching...')
-                self.train_controller(X_val, y_val, max_trails, max_trails, trail_no)
+                self.train_controller(X_eval, y_eval, max_trails, max_trails, trail_no)
         except EarlyStoppingError:
             print(f'Early stopping')
             # TODO: early stopping

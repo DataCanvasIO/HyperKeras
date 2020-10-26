@@ -73,7 +73,7 @@ class OneShotModel(HyperKeras):
             improved = self.history.append(trail)
 
             if improved:
-                self.best_model = estimator.model
+                self.best_model = estimator
             self.searcher.update_result(space_sample, reward)
 
             for callback in self.callbacks:

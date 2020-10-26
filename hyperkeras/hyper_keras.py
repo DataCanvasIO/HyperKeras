@@ -26,6 +26,7 @@ class KerasEstimator(Estimator):
         self.max_model_size = max_model_size
         self.weights_cache = weights_cache
         self.visualization = visualization
+        self.model = self._build_model(space_sample)
         Estimator.__init__(self, space_sample=space_sample)
 
     def _build_model(self, space_sample):

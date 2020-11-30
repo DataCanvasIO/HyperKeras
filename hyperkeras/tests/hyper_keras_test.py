@@ -54,7 +54,6 @@ class Test_HyperKeras():
 
         x, y = self.get_x_y()
         hk.search(x, y, x, y, max_trails=3)
-        assert hk.best_model
         best_trial = hk.get_best_trail()
 
         estimator = hk.final_train(best_trial.space_sample, x, y)

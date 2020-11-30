@@ -7,6 +7,7 @@ from hypernets.model.hyper_model import HyperModel
 from hypernets.model.estimator import Estimator
 
 from tensorflow.keras import backend as K
+from tensorflow.keras.models import Model, load_model, save_model
 from tensorflow.keras import utils
 import tensorflow as tf
 import numpy as np
@@ -55,6 +56,10 @@ class KerasEstimator(Estimator):
         scores = self.model.evaluate(X, y, **kwargs)
         result = {k: v for k, v in zip(self.model.metrics_names, scores)}
         return result
+
+    def save(self, model_file):
+        pass
+        #save_model(self.model, model_file, save_format='h5')
 
 
 class HyperKeras(HyperModel):

@@ -3,6 +3,7 @@ __author__ = 'yangjian'
 """
 
 """
+import numpy as np
 from tensorflow.keras import layers, models, utils
 from hypernets.core.ops import *
 from hypernets.core.search_space import HyperSpace
@@ -10,14 +11,14 @@ from hyperkeras.search_space.enas_common_ops import sepconv3x3, sepconv5x5, avgp
     maxpooling3x3, identity
 from hyperkeras.layer_weights_cache import LayerWeightsCache
 from hyperkeras.layers import Input
-from tests import test_output_dir
+from hyperkeras.tests import test_output_dir
 
 selection = 0
 
 
 class LayerChoice(layers.Layer):
     def __init__(self, options):
-        super().__init__()
+        super(LayerChoice, self).__init__()
         self.options = options
         self._compiled = False
 
@@ -38,7 +39,7 @@ class LayerChoice(layers.Layer):
 
 class SW_Model(models.Model):
     def __init__(self):
-        super().__init__()
+        super(SW_Model, self).__init__()
         self.in_ = layers.Input(shape=(10,))
         options = [layers.Dense(20, activation='relu', name='d1'),
                    layers.Dense(20, activation='relu', name='d2'),

@@ -6,6 +6,7 @@ __author__ = 'yangjian'
 
 from hypernets.core.search_space import HyperSpace
 from tensorflow.keras.models import Model
+from .hyper_keras import HyperKeras
 
 def keras_model(self, deepcopy=True):
     compiled_space, outputs = self.compile_and_forward(deepcopy=deepcopy)

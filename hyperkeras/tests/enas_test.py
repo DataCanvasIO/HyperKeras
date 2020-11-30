@@ -9,7 +9,7 @@ from hyperkeras.search_space.enas_common_ops import sepconv3x3, sepconv5x5, avgp
     maxpooling3x3, identity, conv_cell, conv_node, conv_layer
 from hyperkeras.search_space.enas_micro import enas_micro_search_space
 from hyperkeras.layers import Input
-from tests import test_output_dir
+from hyperkeras.tests import test_output_dir
 
 ids = []
 

@@ -5,11 +5,12 @@
 
 import numpy as np
 import tensorflow as tf
-from hypernets.searchers.random_searcher import RandomSearcher
-from hypernets.core.callbacks import SummaryCallback
-from hypernets.frameworks.keras.hyper_keras import HyperKeras
-from hyperkeras.search_space.dnn_search_space import dnn_search_space
+
+from hyperkeras import HyperKeras
 from hyperkeras.search_space.cnn_search_space import cnn_search_space
+from hyperkeras.search_space.dnn_search_space import dnn_search_space
+from hypernets.core.callbacks import SummaryCallback
+from hypernets.searchers.random_searcher import RandomSearcher
 
 
 class Test_Dnn_Space():
@@ -23,7 +24,6 @@ class Test_Dnn_Space():
         y = np.random.randint(0, 2, size=(100), dtype='int')
 
         hk.search(x, y, x, y, max_trails=3)
-        assert hk.best_model
 
     def test_dnn_space(self):
         space = dnn_search_space(input_shape=10, output_units=2, output_activation='sigmod')
@@ -63,7 +63,6 @@ class Test_Dnn_Space():
         samples = 100
         hk.search(x_train[:samples], y_train[:samples], x_test[:int(samples / 10)], y_test[:int(samples / 10)],
                   max_trails=3, epochs=1)
-        assert hk.best_model
 
     def test_cnn_space(self):
         space = cnn_search_space(input_shape=(50, 50), output_units=10, output_activation='softmax')

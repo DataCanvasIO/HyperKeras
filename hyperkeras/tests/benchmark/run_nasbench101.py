@@ -9,7 +9,7 @@ from hyperkeras.benchmark.nas_bench_101 import NasBench101
 from hypernets.searchers.mcts_searcher import MCTSSearcher
 from hypernets.core.meta_learner import MetaLearner
 from hypernets.core.trial import TrailHistory, DiskTrailStore, Trail
-from tests import test_output_dir
+from hyperkeras.tests import test_output_dir
 
 import argparse
 

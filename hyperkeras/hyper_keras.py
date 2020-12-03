@@ -59,13 +59,13 @@ class KerasEstimator(Estimator):
 
     def save(self, model_file):
         pass
-        #save_model(self.model, model_file, save_format='h5')
+        # save_model(self.model, model_file, save_format='h5')
 
 
 class HyperKeras(HyperModel):
     def __init__(self, searcher, optimizer, loss, metrics, dispatcher=None, callbacks=[],
                  reward_metric=None, max_model_size=0, one_shot_mode=False, one_shot_train_sampler=None,
-                 visualization=False):
+                 visualization=False, task=None):
         self.optimizer = optimizer
         self.loss = loss
         self.metrics = metrics
@@ -79,7 +79,8 @@ class HyperKeras(HyperModel):
         self.one_shot_mode = one_shot_mode
         self.one_shot_train_sampler = one_shot_train_sampler if one_shot_train_sampler is not None else searcher
         self.visualization = visualization
-        HyperModel.__init__(self, searcher, dispatcher=dispatcher, callbacks=callbacks, reward_metric=reward_metric)
+        HyperModel.__init__(self, searcher, dispatcher=dispatcher, callbacks=callbacks, reward_metric=reward_metric,
+                            task=task)
 
     def _get_estimator(self, space_sample):
         estimator = KerasEstimator(space_sample, optimizer=self.optimizer, loss=self.loss, metrics=self.metrics,

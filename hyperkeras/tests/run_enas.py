@@ -3,8 +3,8 @@
 
 """
 import tensorflow as tf
+import numpy as np
 from hypernets.core.callbacks import SummaryCallback
-from hypernets.core.ops import *
 from hypernets.searchers.random_searcher import RandomSearcher
 from hyperkeras.search_space.enas_micro import enas_micro_search_space
 from hyperkeras.hyper_keras import HyperKeras
@@ -60,4 +60,4 @@ hk = HyperKeras(rs, optimizer='adam', loss='categorical_crossentropy', metrics=[
 # tenserboard = TensorBoard('./tensorboard/run_enas')
 hk.search(x_train[:samples], y_train[:samples], x_test[:int(samples / 10)], y_test[:int(samples / 10)],
           max_trails=100, epochs=1, callbacks=[])
-assert hk.best_model
+assert hk.get

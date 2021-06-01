@@ -53,8 +53,8 @@ class Test_HyperKeras():
                         callbacks=[SummaryCallback()])
 
         x, y = self.get_x_y()
-        hk.search(x, y, x, y, max_trails=3)
-        best_trial = hk.get_best_trail()
+        hk.search(x, y, x, y, max_trials=3)
+        best_trial = hk.get_best_trial()
 
         estimator = hk.final_train(best_trial.space_sample, x, y)
         score = estimator.predict(x)

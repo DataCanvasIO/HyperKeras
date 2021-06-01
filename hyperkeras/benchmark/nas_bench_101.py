@@ -3,18 +3,18 @@ __author__ = 'yangjian'
 """
 
 """
-from hypernets.core.ops import InputChoice, ModuleChoice, HyperInput, Identity, MultipleChoice, Choice
-from hypernets.core.search_space import HyperSpace
-from hypernets.core.meta_learner import MetaLearner
-from hypernets.core.trial import get_default_trail_store, TrailHistory, DiskTrailStore, Trail
-
 import numpy as np
 from nasbench import api
+
+from hypernets.core.meta_learner import MetaLearner
+from hypernets.core.ops import ModuleChoice, HyperInput, Identity, MultipleChoice, Choice
+from hypernets.core.search_space import HyperSpace
+from hypernets.core.trial import TrialHistory, DiskTrialStore, Trial
 
 
 class NasBench101():
     def __init__(self, num_nodes, ops=None, input='input',
-                 output='output', nasbench_filepath=None, trail_store_path=None):
+                 output='output', nasbench_filepath=None, trial_store_path=None):
 
         self.num_nodes = num_nodes
         if ops is None:
@@ -24,7 +24,7 @@ class NasBench101():
         self.input = input
         self.output = output
         self.nasbench = api.NASBench(nasbench_filepath)
-        self.trail_store_path = trail_store_path
+        self.trial_store_path = trial_store_path
 
     def get_ops(self, node_no):
         ops = [Identity(name=f'node{node_no}_ops{i}') for i in range(self.num_ops)]
@@ -85,20 +85,20 @@ class NasBench101():
         model_spec = api.ModelSpec(matrix=matrix, ops=ops)
         return self.nasbench.is_valid(model_spec)
 
-    def run_searcher(self, searcher, max_trails=None, max_time_budget=5e6, use_meta_learner=True):
-        history = TrailHistory('max')
+    def run_searcher(self, searcher, max_trials=None, max_time_budget=5e6, use_meta_learner=True):
+        history = TrialHistory('max')
         if use_meta_learner:
-            disk_trail_store = DiskTrailStore(self.trail_store_path)
-            disk_trail_store.clear_history()
-            meta_learner = MetaLearner(history, 'nas_bench_101', disk_trail_store)
+            disk_trial_store = DiskTrialStore(self.trial_store_path)
+            disk_trial_store.clear_history()
+            meta_learner = MetaLearner(history, 'nas_bench_101', disk_trial_store)
             searcher.set_meta_learner(meta_learner)
 
         self.nasbench.reset_budget_counters()
         times, best_valids, best_tests = [0.0], [0.0], [0.0]
-        trail_no = 0
+        trial_no = 0
         while True:
-            trail_no += 1
-            if max_trails is not None and trail_no > max_trails:
+            trial_no += 1
+            if max_trials is not None and trial_no > max_trials:
                 break
 
             sample = searcher.sample()
@@ -115,8 +115,8 @@ class NasBench101():
             time_spent, _ = self.nasbench.get_budget_counters()
             times.append(time_spent)
             reward = data['test_accuracy']
-            trail = Trail(sample, trail_no, reward, data['training_time'])
-            history.append(trail)
+            trial = Trial(sample, trial_no, reward, data['training_time'])
+            history.append(trial)
             searcher.update_result(sample, reward)
 
             if time_spent > max_time_budget:

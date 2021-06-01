@@ -112,7 +112,7 @@ class HyperKeras(HyperModel):
                 break
         print(f'One-shot model training finished. Epoch[{epoch}], Step[{step}]')
 
-    def export_trail_configuration(self, trail):
+    def export_trial_configuration(self, trial):
         return None
 
 

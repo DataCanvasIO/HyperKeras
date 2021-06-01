@@ -23,7 +23,7 @@ class Test_Dnn_Space():
         x = np.random.randint(0, 10000, size=(100, 10))
         y = np.random.randint(0, 2, size=(100), dtype='int')
 
-        hk.search(x, y, x, y, max_trails=3)
+        hk.search(x, y, x, y, max_trials=3)
 
     def test_dnn_space(self):
         space = dnn_search_space(input_shape=10, output_units=2, output_activation='sigmod')
@@ -62,7 +62,7 @@ class Test_Dnn_Space():
         # sample for speed up
         samples = 100
         hk.search(x_train[:samples], y_train[:samples], x_test[:int(samples / 10)], y_test[:int(samples / 10)],
-                  max_trails=3, epochs=1)
+                  max_trials=3, epochs=1)
 
     def test_cnn_space(self):
         space = cnn_search_space(input_shape=(50, 50), output_units=10, output_activation='softmax')

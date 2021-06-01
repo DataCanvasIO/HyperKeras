@@ -36,50 +36,50 @@ class OneShotModel(HyperKeras):
                                            one_shot_train_sampler=one_shot_train_sampler,
                                            visualization=visualization)
 
-    def search(self, X, y, X_eval, y_eval, max_trails=None, dataset_id=None, trail_store=None, **fit_kwargs):
+    def search(self, X, y, X_eval, y_eval, max_trials=None, dataset_id=None, trial_store=None, **fit_kwargs):
         self.start_search_time = time.time()
         try:
-            trail_no = 1
+            trial_no = 1
             for epoch in range(self.epochs):
                 print(f'One-shot model epoch({epoch}) training...')
                 self.fit_one_shot_model_epoch(X, y, batch_size=self.batch_size, epoch=epoch)
                 if self.train_controller_per_epoch:
-                    trail_no = self.train_controller(X_eval, y_eval, self.controller_train_steps, max_trails, trail_no)
+                    trial_no = self.train_controller(X_eval, y_eval, self.controller_train_steps, max_trials, trial_no)
 
             if not self.train_controller_per_epoch:
                 print(f'Architecture searching...')
-                self.train_controller(X_eval, y_eval, max_trails, max_trails, trail_no)
+                self.train_controller(X_eval, y_eval, max_trials, max_trials, trial_no)
         except EarlyStoppingError:
             print(f'Early stopping')
             # TODO: early stopping
 
-    def train_controller(self, X_val, y_val, steps, max_trails, trail_from):
-        trail_no = trail_from
+    def train_controller(self, X_val, y_val, steps, max_trials, trial_from):
+        trial_no = trial_from
 
         for con_step in range(steps):
-            if max_trails is not None and trail_no >= max_trails:
+            if max_trials is not None and trial_no >= max_trials:
                 break
             start_time = time.time()
             space_sample = self.searcher.sample()
             estimator = self._get_estimator(space_sample)
             for callback in self.callbacks:
-                callback.on_build_estimator(self, space_sample, estimator, trail_no)
-                callback.on_trail_begin(self, space_sample, trail_no)
+                callback.on_build_estimator(self, space_sample, estimator, trial_no)
+                callback.on_trial_begin(self, space_sample, trial_no)
 
             metrics = estimator.evaluate(X_val, y_val, batch_size=self.batch_size, metrics=[self.reward_metric])
             reward = self._get_reward(metrics, self.reward_metric)
             elapsed = time.time() - start_time
-            trail = Trail(space_sample, trail_no, reward, elapsed)
-            improved = self.history.append(trail)
+            trial = Trail(space_sample, trial_no, reward, elapsed)
+            improved = self.history.append(trial)
 
             if improved:
                 self.best_model = estimator
             self.searcher.update_result(space_sample, reward)
 
             for callback in self.callbacks:
-                callback.on_trail_end(self, space_sample, trail_no, reward, improved, elapsed)
-                trail_no += 1
-        return trail_no
+                callback.on_trial_end(self, space_sample, trial_no, reward, improved, elapsed)
+                trial_no += 1
+        return trial_no
 
     def derive_arch(self, X_test, y_test, num=10):
         for i in range(num):

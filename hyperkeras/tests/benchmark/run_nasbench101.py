@@ -8,7 +8,7 @@ from nasbench import api
 from hyperkeras.benchmark.nas_bench_101 import NasBench101
 from hypernets.searchers.mcts_searcher import MCTSSearcher
 from hypernets.core.meta_learner import MetaLearner
-from hypernets.core.trial import TrailHistory, DiskTrailStore, Trail
+from hypernets.core.trial import TrialHistory, DiskTrialStore, Trial
 from hyperkeras.tests import test_output_dir
 
 import argparse
@@ -27,20 +27,20 @@ def valid_space_sample(space_sample):
     return nasbench.is_valid(model_spec)
 
 
-def run_searcher(searcher, max_trails=None, max_time_budget=5e6, use_meta_learner=True):
-    history = TrailHistory('max')
+def run_searcher(searcher, max_trials=None, max_time_budget=5e6, use_meta_learner=True):
+    history = TrialHistory('max')
     if use_meta_learner:
-        disk_trail_store = DiskTrailStore(f'{test_output_dir}/trail_store')
-        disk_trail_store.clear_history()
-        meta_learner = MetaLearner(history, 'nas_bench_101', disk_trail_store)
+        disk_trial_store = DiskTrialStore(f'{test_output_dir}/trial_store')
+        disk_trial_store.clear_history()
+        meta_learner = MetaLearner(history, 'nas_bench_101', disk_trial_store)
         searcher.set_meta_learner(meta_learner)
 
     nasbench.reset_budget_counters()
     times, best_valids, best_tests = [0.0], [0.0], [0.0]
-    trail_no = 0
+    trial_no = 0
     while True:
-        trail_no += 1
-        if max_trails is not None and trail_no > max_trails:
+        trial_no += 1
+        if max_trials is not None and trial_no > max_trials:
             break
 
         sample = searcher.sample()
@@ -57,8 +57,8 @@ def run_searcher(searcher, max_trails=None, max_time_budget=5e6, use_meta_learne
         time_spent, _ = nasbench.get_budget_counters()
         times.append(time_spent)
         reward = data['test_accuracy']
-        trail = Trail(sample, trail_no, reward, data['training_time'])
-        history.append(trail)
+        trial = Trial(sample, trial_no, reward, data['training_time'])
+        history.append(trial)
         searcher.update_result(sample, reward)
 
         if time_spent > max_time_budget:
